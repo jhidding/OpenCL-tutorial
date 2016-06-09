@@ -6,8 +6,7 @@ The code is written in C++(14), and OpenCL C v1.2. It has only been tested
 on my Debian machine with an integrated Intel Haswell using the open source 
 Beignet drivers. 
 
-Contents
---------
+### Contents
 
 - cl-info: prints the information of all platforms and devices
   found on the host.
@@ -15,27 +14,26 @@ Contents
 - lesson2: generates two arrays on the device and computes the sum.
 - lesson3: TODO: compute the sum of an array recursively.
 
-Build instructions
-------------------
+### Build instructions
 
 These lessons can be compiled using the Boil build tool. This build tool can be found
 as an example application in the [Noodles repository](http://www.github.com/NLeSC/noodles).
 
-Links
------
+### Links
 
 - [Khronos OpenCL homepage](https://www.khronos.org/opencl/)
 - [OpenCL v2.1 Reference](https://www.khronos.org/registry/cl/sdk/2.1/docs/man/xhtml/)
 - [OpenCL C++ bindings](http://github.khronos.org/OpenCL-CLHPP/index.html)
 
-Work in progress
-----------------
+### Work in progress
 
 I will keep working on these lessons as I familiarise myself with OpenCL.
 
 
-Lesson 0 (cl-info)
-==================
+Lessons
+-------
+
+### Lesson 0 (cl-info)
 
 - OpenCL: finding devices
 
@@ -61,8 +59,7 @@ following output:
         # Compute units:  20
 
 
-Lesson 1 (squares)
-==================
+### Lesson 1 (squares)
 
 - Kernels: how to load, compile and run them.
 - Buffers: allocating, reading and writing device memory.
@@ -83,8 +80,7 @@ there are no concurrency issues yet. Each action on the device is send through
 the *command queue*.
 
 
-Lesson 2 (adding up numbers)
-============================
+### Lesson 2 (adding up numbers)
 
 - Manage dependencies with events.
 
