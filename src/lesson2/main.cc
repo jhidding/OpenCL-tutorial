@@ -2,6 +2,7 @@
 #include "../cl-util/get_gpu_context.hh"
 #include "../cl-util/compile.hh"
 #include "../cl-util/timing.hh"
+#include "../cl-util/set_args.hh"
 
 #include <utility>
 #include <tuple>
@@ -36,25 +37,26 @@ int main(int argc, char **argv)
     int err_code;
     cl::Kernel initVectorA_k(program, "initVectorA", &err_code);
     checkErr(err_code, "at kernel construction: initVectorA");
-    initVectorA_k.setArg(0, a_d);
+    set_args(initVectorA_k, a_d);
     checkErr(err_code, "at kernel.setArg(): initVectorA");
 
     cl::Kernel initVectorB_k(program, "initVectorB", &err_code);
     checkErr(err_code, "at kernel construction: initVectorB");
-    initVectorB_k.setArg(0, b_d);
-    initVectorB_k.setArg(1, N);
+    set_args(initVectorB_k, b_d, N);
     checkErr(err_code, "at kernel.setArg(): initVectorB");
 
     cl::Kernel sum_k(program, "sum", &err_code);
     checkErr(err_code, "at kernel construction: sum");
-    sum_k.setArg(0, c_d);
-    sum_k.setArg(1, b_d);
-    sum_k.setArg(2, a_d);
+
+    set_args(sum_k, c_d, b_d, a_d);
+
+    /* this was:
+        sum_k.setArg(0, c_d);
+        sum_k.setArg(1, b_d);
+        sum_k.setArg(2, a_d); */
+
     checkErr(err_code, "at kernel.setArg(): sum");
 
-    // enqueueNDRangeKernel (const Kernel &kernel, const NDRange &offset, const
-    // NDRange &global, const NDRange &local=NullRange, const vector< Event >
-    // *events=NULL, Event *event=NULL) const
     cl::Event initVectorA_evt, initVectorB_evt;
     queue.enqueueNDRangeKernel(
         initVectorA_k, 1, cl::NDRange(N), cl::NullRange, 
