@@ -59,17 +59,17 @@ int main(int argc, char **argv)
 
     cl::Event initVectorA_evt, initVectorB_evt;
     queue.enqueueNDRangeKernel(
-        initVectorA_k, 1, cl::NDRange(N), cl::NullRange, 
+        initVectorA_k, 0, cl::NDRange(N), cl::NullRange, 
         NULL, &initVectorA_evt);
     queue.enqueueNDRangeKernel(
-        initVectorB_k, 1, cl::NDRange(N), cl::NullRange, 
+        initVectorB_k, 0, cl::NDRange(N), cl::NullRange, 
         NULL, &initVectorB_evt);
 
     std::vector<cl::Event> sum_wait_list = { 
         initVectorA_evt, initVectorB_evt };
     cl::Event sum_evt;
     queue.enqueueNDRangeKernel(
-        sum_k, 1, cl::NDRange(N), cl::NullRange,
+        sum_k, 0, cl::NDRange(N), cl::NullRange,
         &sum_wait_list, &sum_evt);
 
     std::vector<cl::Event> read_wait_list = { sum_evt };
