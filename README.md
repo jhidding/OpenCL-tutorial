@@ -12,12 +12,12 @@ Beignet drivers.
   found on the host.
 - lesson1: computes squares of an array of numbers.
 - lesson2: generates two arrays on the device and computes the sum.
-- lesson3: TODO: compute the sum of an array recursively.
+- lesson3: compute the sum of an array recursively.
 
 ### Build instructions
 
 These lessons can be compiled using the Boil build tool. This build tool can be found
-as an example application in the [Noodles repository](http://www.github.com/NLeSC/noodles).
+as an example application in the [Noodles repository](http://www.github.com/NLeSC/noodles). If you have a working CMakeLists.txt, I'd be happy to add it to the repository.
 
 ### Links
 
@@ -90,4 +90,11 @@ these numbers to create a third array. This last operation needs the first two
 to have finished, before we can start. Each time we enter a command to the queue,
 we can tie an *event* to it and a list of events on which we need to wait.
 
+### Lesson 3 (summing a list of numbers)
+
+- Generate a series of events programmatically.
+
+To sum a list of numbers, we have a kernel that sums a number at the `global_id` index
+and a number at a given offset. This kernel is then applied several times, each time
+halving the size of the problem.
 
