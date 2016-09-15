@@ -340,7 +340,7 @@
 #ifndef CL_HPP_
 #define CL_HPP_
 
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
 
 /* Handle deprecated preprocessor definitions. In each case, we only check for
  * the old name if the new name is not defined, so that user code can define
