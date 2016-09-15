@@ -17,7 +17,15 @@ Beignet drivers.
 ### Build instructions
 
 These lessons can be compiled using the Boil build tool. This build tool can be found
-as an example application in the [Noodles repository](http://www.github.com/NLeSC/noodles). If you have a working CMakeLists.txt, I'd be happy to add it to the repository.
+as an example application in the [Noodles repository](http://www.github.com/NLeSC/noodles);
+and it is included here in the `scripts` directory. To install Noodles, do::
+    
+    pip3 install noodles --user
+
+The build script reads `boil.ini`, which you should modify to fit you system's configuration.
+The location of the OpenCL libraries is determined through `pkg-config`.
+
+If you have a working CMakeLists.txt, I'd be happy to add it to the repository.
 
 ### Links
 
