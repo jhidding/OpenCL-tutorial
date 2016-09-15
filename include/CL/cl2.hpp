@@ -340,6 +340,8 @@
 #ifndef CL_HPP_
 #define CL_HPP_
 
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+
 /* Handle deprecated preprocessor definitions. In each case, we only check for
  * the old name if the new name is not defined, so that user code can define
  * both and hence work with either version of the bindings.
@@ -6513,7 +6515,7 @@ inline cl_int cl::Program::getInfo(cl_program_info name, vector<vector<unsigned 
 
         // Resize the parameter array and constituent arrays
         param->resize(numBinaries);
-        for (int i = 0; i < numBinaries; ++i) {
+        for (unsigned i = 0; i < numBinaries; ++i) {
             (*param)[i].resize(sizes[i]);
         }
 
