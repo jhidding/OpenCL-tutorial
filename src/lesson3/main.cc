@@ -29,7 +29,7 @@ class Timer
     public:
         Timer() {}
 
-        void start(std::string const &msg_) 
+        void start(std::string const &msg_)
         {
             msg = msg_;
             std::cerr << "<<< start timer [" << msg << "]\n";
@@ -37,7 +37,7 @@ class Timer
         }
 
         void stop() const
-        { 
+        {
             clock::time_point t2 = clock::now();
             double duration = std::chrono::duration<double, std::milli>(t2 - t1).count();
             std::cerr << ">>> stop timer [" << msg << "]: " << duration << " ms\n";
@@ -52,18 +52,18 @@ int main(int argc, char **argv)
     std::tie(devices, cx) = get_default_gpu_context();
     std::cerr << "\n";
 
-    timer.start("compiling"); 
+    timer.start("compiling");
     cl::Program program = get_program_from_file(
         cx, devices, "src/kernels/lesson3.cl");
     timer.stop(); std::cerr << "\n";
 
     // reserve memory for buffers
     int err_code;
-    unsigned N = 1L << 26, M = N;
+    unsigned N = 1 << 26, M = N;
     std::vector<float> a_h(N), b_h(N);
     size_t a_bytesize = sizeof(float) * N;
     cl::Buffer a_d(cx, CL_MEM_READ_WRITE, a_bytesize);
-    
+
     std::cerr << "Running with N = " << N << ", generating random numbers ...\n";
     timer.start("initialisation");
     // get seed from current time
@@ -89,8 +89,8 @@ int main(int argc, char **argv)
         NULL, &write_evt);
 
     // We keep a wait_list that contains one element for each
-    // next iteration. 
-    std::vector<cl::Event> 
+    // next iteration.
+    std::vector<cl::Event>
         wait_list  = { write_evt };
     std::vector<std::tuple<unsigned, cl::Event>>
         event_list;
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
         cl::Event sum_step_evt;
         std::cerr << "Queueing sum_step with size " << N_floor << std::endl;
         err_code = queue.enqueueNDRangeKernel(
-            sum_step_k, 0, cl::NDRange(N_floor), cl::NullRange, 
+            sum_step_k, 0, cl::NDRange(N_floor), cl::NullRange,
             &wait_list, &sum_step_evt);
         checkErr(err_code, "enqueueing sum_step");
 
@@ -139,14 +139,14 @@ int main(int argc, char **argv)
     std::cout << "# Number: " << N << std::endl
               << "# Sum:    " << result << std::endl
               << "# Mean:   " << result / N << std::endl;
-   
+
     std::cout << "# timing stats\n"
               << "# |  n-elements |       time(ms) |\n";
     for (auto &evt : event_list)
     {
         unsigned long t1, t2;
         std::tie(t1, t2) = get_runtime(std::get<1>(evt));
-        std::cout << std::setw(16) << std::get<0>(evt) << " " 
+        std::cout << std::setw(16) << std::get<0>(evt) << " "
                   << std::fixed << std::setprecision(6)
                   << std::setw(16) << double(t2 - t1) / 1e6 << "\n";
     }
