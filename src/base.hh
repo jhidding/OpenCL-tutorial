@@ -25,7 +25,7 @@ namespace cl_tutorial
         public:
             exception(std::string const &msg):
                 msg(msg) {}
-            
+
             virtual char const *what() const throw()
             {
                 return msg.c_str();

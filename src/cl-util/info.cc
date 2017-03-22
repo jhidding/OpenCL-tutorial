@@ -8,15 +8,15 @@ void cl_tutorial::print_opencl_info(
     std::vector<cl::Platform> const &platform_list)
 {
     std::cerr << "Number of platforms: " << platform_list.size() << "\n\n";
-    
+
     for (unsigned i = 0; i < platform_list.size(); ++i)
     {
         auto const &platform = platform_list[i];
-        std::cerr << "== Nº " << i+1 
+        std::cerr << "== Nº " << i+1
                   << " =================================================================\n"
                   << "  Name:      "
                   << platform.getInfo<CL_PLATFORM_NAME>() << "\n"
-                  << "  Vendor:    " 
+                  << "  Vendor:    "
                   << platform.getInfo<CL_PLATFORM_VENDOR>() << "\n";
 
         std::vector<cl::Device> device_list;
@@ -27,7 +27,7 @@ void cl_tutorial::print_opencl_info(
         for (unsigned j = 0; j < device_list.size(); ++j)
         {
             auto const &device = device_list[j];
-            std::cerr << "  -- Nº " << j+1 
+            std::cerr << "  -- Nº " << j+1
                       << " ---------------------------------------------------------------\n"
                       << "    Name:             "
                       << device.getInfo<CL_DEVICE_NAME>() << "\n"
