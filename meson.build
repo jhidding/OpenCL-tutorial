@@ -17,14 +17,29 @@ libpng_dep = dependency('libpng')
 
 local_include = include_directories('./include')
 
-executable('cl-info', cl_info_files, cl_util_files, dependencies : opencl_dep)
-executable('lesson1', cl_util_files, lesson1_files, dependencies : opencl_dep)
-executable('lesson2', cl_util_files, lesson2_files, dependencies : opencl_dep)
-executable('lesson3', cl_util_files, lesson3_files, dependencies : opencl_dep)
+executable('cl-info', cl_info_files, cl_util_files,
+    cpp_args: ['-std=c++14'],
+    dependencies : opencl_dep,
+    include_directories: local_include)
+
+executable('lesson1', cl_util_files, lesson1_files,
+    cpp_args: ['-std=c++14'],
+    dependencies : opencl_dep,
+    include_directories: local_include)
+
+executable('lesson2', cl_util_files, lesson2_files,
+    cpp_args: ['-std=c++14'],
+    dependencies : opencl_dep,
+    include_directories: local_include)
+
+executable('lesson3', cl_util_files, lesson3_files,
+    cpp_args: ['-std=c++14'],
+    dependencies : opencl_dep,
+    include_directories: local_include)
 
 executable('lesson4', cl_util_files, lesson4_files, fractal_files,
     dependencies : [opencl_dep, libpng_dep],
-    cpp_args: ['-fopenmp'],
+    cpp_args: ['-std=c++14', '-fopenmp'],
     link_args: ['-lgomp'],
     include_directories: local_include)
 
