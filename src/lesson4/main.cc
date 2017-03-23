@@ -1,6 +1,9 @@
 #include <png++/png.hpp>
 
+#include "../base.hh"
 #include "../fractal/common.hh"
+
+using namespace cl_tutorial;
 
 void render_openmp()
 {
@@ -25,6 +28,9 @@ void render_openmp()
 
 int main(int argc, char **argv)
 {
+    Timer time;
+    time.start("render with openmp");
     render_openmp();
+    time.stop();
 }
 
