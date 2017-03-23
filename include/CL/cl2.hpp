@@ -471,7 +471,7 @@
 # define CL_USE_DEPRECATED_OPENCL_2_0_APIS
 #endif
 
-#ifdef __GNUC__
+#if __GNUC__ >= 6
 # pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 
