@@ -1,5 +1,6 @@
-
+subdir('./lesson4')
 subdir('./lesson3')
+subdir('./fractal')
 subdir('./lesson2')
 subdir('./lesson1')
 subdir('./cl-util')

@@ -1,1 +1,1 @@
-lesson2_files = files('./main.cc', )
+lesson2_files = files('./main.cc',)

@@ -3,8 +3,8 @@ OpenCL tutorial
 
 This repository contains some lessons on working with OpenCL.
 The code is written in C++(14), and OpenCL C v1.2. It has only been tested
-on my Debian machine with an integrated Intel Haswell using the open source 
-Beignet drivers. 
+on my Debian machine with an integrated Intel Haswell using the open source
+Beignet drivers.
 
 ### Contents
 
@@ -111,3 +111,7 @@ To sum a list of numbers, we have a kernel that sums a number at the `global_id`
 and a number at a given offset. This kernel is then applied several times, each time
 halving the size of the problem.
 
+### Lesson 4 (convolving an image)
+
+- Doing something useful for a change.
+- Needs libpng (pngpp is included)
