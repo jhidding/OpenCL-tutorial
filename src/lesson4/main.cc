@@ -29,6 +29,7 @@ void render_openmp()
 int main(int argc, char **argv)
 {
     Timer time;
+
     time.start("render with openmp");
     render_openmp();
     time.stop();

@@ -4,4 +4,3 @@ __kernel void sum_step(global float *A, unsigned N)
     A[i] += A[i+N];
 }
 
-// vim:filetype=c:
