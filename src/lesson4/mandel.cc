@@ -1,9 +1,9 @@
-__kernel void mandel(global float *out, float x0, float y0, float res, unsigned max_it)
-{
-    unsigned i = get_global_id(0),
-             j = get_global_id(1);
+#include <cstddef>
 
-    size_t address = i + j * get_global_size(0);
+void mandel(float *out, float x0, float y0, float res, unsigned max_it,
+    unsigned i, unsigned j, unsigned width)
+{
+    size_t address = i + j * width;
 
     float cx = x0 + res * i,
           cy = y0 + res * j,
@@ -25,14 +25,11 @@ __kernel void mandel(global float *out, float x0, float y0, float res, unsigned 
     out[address] = (k == max_it ? 1.0 : (float)k / max_it);
 }
 
-__kernel void julia(
-        global float *out, float x0, float y0, float res,
-        float cx, float cy, unsigned max_it)
+void julia(float *out, float x0, float y0, float res,
+    float cx, float cy, unsigned max_it,
+    unsigned i, unsigned j, unsigned width)
 {
-    unsigned i = get_global_id(0),
-             j = get_global_id(1);
-
-    size_t address = i + j * get_global_size(0);
+    size_t address = i + j * width;
 
     float zx = x0 + res * i,
           zy = y0 + res * j,
@@ -53,4 +50,3 @@ __kernel void julia(
 
     out[address] = (k == max_it ? 1.0 : (float)k / max_it);
 }
-

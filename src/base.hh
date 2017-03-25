@@ -7,6 +7,7 @@
 #include <iostream>
 #include <exception>
 #include <chrono>
+#include <utility>
 
 namespace cl_tutorial
 {
@@ -60,5 +61,6 @@ namespace cl_tutorial
                 std::cerr << ">>> stop timer [" << msg << "]: " << duration << " ms\n";
             }
     };
+
 }
 

@@ -1,7 +1,8 @@
-#include <png++/png.hpp>
 #include <cmath>
 
 #include "../base.hh"
+#include "../save_png.hh"
+
 #include "../cl-util/get_gpu_context.hh"
 #include "../cl-util/compile.hh"
 #include "../cl-util/timing.hh"
@@ -9,81 +10,14 @@
 
 using namespace cl_tutorial;
 
-struct Colour {
-    int r, g, b;
+extern void mandel(
+    float *out, float x0, float y0, float res, unsigned max_it,
+    unsigned i, unsigned j, unsigned width);
 
-    Colour(int r_, int g_, int b_):
-        r(r_), g(g_), b(b_) {}
-};
-
-
-Colour colour_map(float x) {
-    float r = (0.472-0.567*x+4.05*pow(x, 2))
-              /(1.+8.72*x-19.17*pow(x, 2)+14.1*pow(x, 3)),
-          g = 0.108932-1.22635*x+27.284*pow(x, 2)-98.577*pow(x, 3)
-              +163.3*pow(x, 4)-131.395*pow(x, 5)+40.634*pow(x, 6),
-          b = 1./(1.97+3.54*x-68.5*pow(x, 2)+243*pow(x, 3)
-              -297*pow(x, 4)+125*pow(x, 5));
-
-    return Colour(int(r*255), int(g*255), int(b*255));
-}
-
-
-void mandel(float *out, float x0, float y0, float res, unsigned max_it,
-    unsigned i, unsigned j, unsigned width)
-{
-    size_t address = i + j * width;
-
-    float cx = x0 + res * i,
-          cy = y0 + res * j,
-          zx = 0, zy = 0;
-
-    for (unsigned k = 0; k < max_it; ++k)
-    {
-        float u = zx*zx - zy*zy,
-              v = 2*zx*zy,
-              w = zx*zx + zy*zy;
-
-        if (w > 4.0)
-        {
-            out[address] = (float)k / max_it;
-            return;
-        }
-
-        zx = u + cx;
-        zy = v + cy;
-    }
-
-    out[address] = 1.0;
-}
-
-void julia(float *out, float x0, float y0, float res,
+extern void julia(
+    float *out, float x0, float y0, float res,
     float cx, float cy, unsigned max_it,
-    unsigned i, unsigned j, unsigned width)
-{
-    size_t address = i + j * width;
-
-    float zx = x0 + res * i,
-          zy = y0 + res * j;
-
-    for (unsigned k = 0; k < max_it; ++k)
-    {
-        float u = zx*zx - zy*zy,
-              v = 2*zx*zy,
-              w = zx*zx + zy*zy;
-
-        if (w > 4.0)
-        {
-            out[address] = (float)k / max_it;
-            return;
-        }
-
-        zx = u + cx;
-        zy = v + cy;
-    }
-
-    out[address] = 1.0;
-}
+    unsigned i, unsigned j, unsigned width);
 
 void render_openmp(unsigned width, unsigned height, unsigned max_it, float *data)
 {
@@ -107,7 +41,7 @@ void render_opencl(
     cl::Context cx;
     std::tie(devices, cx) = get_default_gpu_context();
     cl::Program program = get_program_from_file(
-        cx, devices, "src/kernels/julia.cl");
+        cx, devices, "src/kernels/mandel.cl");
     cl::CommandQueue queue(cx, devices[0], CL_QUEUE_PROFILING_ENABLE);
     time.stop();
 
@@ -137,59 +71,30 @@ void render_opencl(
     queue.enqueueReadBuffer(mandel_d, CL_TRUE, 0, mandel_bytesize,
         data, &mandel_wait_list, NULL);
     queue.finish();
+
+    print_runtime_msg(get_runtime(mandel_event), "render time without overhead");
 }
 
 int main(int argc, char **argv)
 {
     Timer time;
 
-    size_t dim[2] = { 3840, 2160 };
-    // size_t dim[2] = { 1200, 600 };
-    size_t size = dim[0] * dim[1];
+    size_t width = 3840, height = 2160;
+    size_t size = width * height;
 
     std::vector<float> mandel_h(size);
 
     time.start("render with openmp");
-    render_openmp(dim[0], dim[1], 512, mandel_h.data());
+    render_openmp(width, height, 512, mandel_h.data());
     time.stop();
 
-    {
-        time.start("write to png");
-        png::image<png::rgb_pixel> image(dim[0], dim[1]);
-
-        for (unsigned j = 0; j < image.get_height(); ++j)
-        {
-            for (unsigned i = 0; i < image.get_width(); ++i)
-            {
-                Colour c = colour_map(mandel_h[i + j*dim[0]]);
-                image[j][i] = png::rgb_pixel(c.r, c.g, c.b);
-            }
-        }
-
-        image.write("julia1.png");
-        time.stop();
-    }
+    save_png("julia1.png", width, height, mandel_h, colour_map::rainbow);
 
     std::fill(mandel_h.begin(), mandel_h.end(), 0.0);
     time.start("render with opencl");
-    render_opencl(dim[0], dim[1], 512, mandel_h.data());
+    render_opencl(width, height, 512, mandel_h.data());
     time.stop();
 
-    {
-        time.start("write to png");
-        png::image<png::rgb_pixel> image(dim[0], dim[1]);
-
-        for (unsigned j = 0; j < image.get_height(); ++j)
-        {
-            for (unsigned i = 0; i < image.get_width(); ++i)
-            {
-                Colour c = colour_map(mandel_h[i + j*dim[0]]);
-                image[j][i] = png::rgb_pixel(c.r, c.g, c.b);
-            }
-        }
-
-        image.write("julia2.png");
-        time.stop();
-    }
+    save_png("julia2.png", width, height, mandel_h, colour_map::rainbow);
 }
 
