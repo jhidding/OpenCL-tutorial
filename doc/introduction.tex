@@ -1,0 +1,82 @@
+\documentclass{article}
+
+\usepackage{acronym}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize
+}
+
+
+\begin{document}
+
+  \section{Introduction}
+    Since you're reading this, I asume you want to learn about programming \ac{OpenCL}. This tutorial is not going to teach you \emph{why} you'd want to program using \ac{OpenCL}. I can only tell you why \emph{I} want to program \ac{OpenCL}, then you can decide if our goals are in alignment: I want to do generic number crunching, using the speed of \acp{GPU} where possible.
+
+    The second question you could (but shouldn't) ask is: why not \acs{CUDA}? nVidia's \ac{CUDA} is a proprietary system that only runs on nVidia hardware. When I write software I don't want its use being limited to machines with an nVidia \ac{GPU}. I don't own nVidia hardware; all I want is to speed up computations that I'd do on my laptop's \acs{CPU} otherwise.
+
+    During this tutorial we'll develop ways of embedding the \acs{OpenCL} enabled code into other code without having to write too much boiler plate at every time we're calling into \acs{OpenCL}. This means we'll be using C++.
+
+    \subsection{What you need}
+    A distribution of \acs{GNU} running on the Linux kernel. Most of this should work fine on Windows, but I have no experience with developing on Windows what so ever.
+
+    \subsubsection{To run \acs{OpenCL}.}
+    The \acf{OpenCL} is a specification of an interface for doing computations on heterogenious hardware. To use \ac{OpenCL} you need an actual implementation. The implementation you use will depend on the hardware that you're running on. These implementations are distributed in the form of \acfp{ICD}. Some of these \acp{ICD} are packaged by \acs{GNU}/Linux distributions, but for best performance on larger \acfp{GPU}, it is not unusual that you need to download a non-free \ac{ICD} from the vendor's website.
+
+    \begin{description}
+      \item[Intel and \acs{AMD} \acsp{CPU}] Intel ships an \acs{SDK} for which you need to register: \url{https://software.intel.com/en-us/intel-opencl/}. If you don't like this, the alternative is to use the \acs{AMD} driver: \url{http://developer.amd.com/tools-and-sdks/opencl-zone/}, or the open source \acf{PoCL}: \url{http://portablecl.org/}.
+      \item[Intel \acs{GPU}] Many laptops come with onboard Intel graphics cards. There is an open source \acs{ICD} for Intel \acp{GPU} called Beignet: \url{https://01.org/beignet}. Beignet currently supports OpenCL 2.0 for Skylake \acp{GPU} and later, and is available all major \acs{GNU}/Linux distributions.
+      \item[Nvidia \acsp{GPU}] Nvidia has an \acs{ICD}, but it only supports OpenCL 1.2. Most people will tell you: just use \ac{CUDA}. At some point Nvidia will have to support Vulkan, and Vulkan and \ac{OpenCL} have the same \ac{SPIR} back-end.
+      \item[\acs{AMD} \acsp{GPU}] \acs{AMD} has the most complete support for \ac{OpenCL}. The \ac{SDK} can be found at \url{http://developer.amd.com/tools-and-sdks/opencl-zone/}.
+    \end{description}
+
+  The nice thing about \acsp{ICD}, is that you can have multiple \ac{OpenCL} implementations installed on the same system. Make sure you install an \ac{ICD} loader and the develoment headers too.
+
+  \subsubsection{To run this tutorial.}
+  Since we're going to use the C++ interface to the \ac{OpenCL} host \acs{API}, you'll also need the {\tt cl2.hpp} file. Not all distributions ship this, so a version is included in this repository. We'll be working on \ac{PNG} images using the {\tt png++} library. This is also included in this repository, but it talks to {\tt libpng}, which you need to have installed.
+
+  Lessons in this tutorial are built with the Meson build system, which in turn uses Ninja. Meson is written in Python and can be installed using:
+
+  \begin{lstlisting}[language=bash]
+  > pip install --user meson
+  \end{lstlisting}
+
+  If Ninja is not present on your system, install it by cloning it with {\tt git}, and put the binary in a findable place (this assumes {\tt \~\ /.local/bin} is in your {\tt \$PATH}):
+
+  \begin{lstlisting}[language=bash]
+  > git clone git@github.com:ninja-build/ninja.git
+  > cd ninja
+  ninja> ./configure.py --bootstrap
+  ninja> cp ninja ~/.local/bin
+  \end{lstlisting}
+
+  \section{Lesson 1: Finding devices}
+
+  \section{Acronyms}
+  \begin{acronym}
+    \acro{AMD}{Advanced Micro Devices, Inc.}
+    \acro{API}{Application Programming Interface}
+    \acro{CPU}{Central Processing Unit}
+    \acro{CUDA}{Compute Unified Device Architecture}
+    \acro{ICD}{Installable Client Driver}
+    \acro{GNU}{GNU's Not Unix}
+    \acro{GPU}{Graphical Processing Unit}
+    \acro{OpenCL}{Open Computing Language}
+    \acro{PNG}{Portable Network Graphics}
+    \acro{PoCL}{Portable Computing Language}
+    \acro{SDK}{Software Development Kit}
+    \acro{SPIR}{Standard Portable Intermediate Representation}
+  \end{acronym}
+\end{document}
+
+% vim: ts=2 sw=2
