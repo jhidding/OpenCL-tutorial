@@ -8,7 +8,7 @@ namespace cl_tutorial
     void set_args_n(cl::Kernel &k) {}
 
     template <unsigned N, typename First, typename ...Rest>
-    void set_args_n(cl::Kernel &k, First &first, Rest &&...rest)
+    void set_args_n(cl::Kernel &k, First &&first, Rest &&...rest)
     {
         k.setArg(N, first);
         set_args_n<N+1>(k, std::forward<Rest>(rest)...);

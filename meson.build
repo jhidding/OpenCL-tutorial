@@ -46,9 +46,9 @@ executable('lesson3', lesson3_files,
     link_with: [cl_util_static],
     include_directories: local_include)
 
-executable('lesson4', lesson4_files, fractal_files,
+executable('lesson4', lesson4_files,
     dependencies : [opencl_dep, libpng_dep],
-    cpp_args: ['-std=c++14', '-fopenmp'],
+    cpp_args: ['-g', '-std=c++14', '-O3', '-fopenmp'],
     link_args: ['-lgomp'],
     link_with: [cl_util_static],
     include_directories: local_include)
