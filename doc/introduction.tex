@@ -1,34 +1,31 @@
 \documentclass{article}
 
 \usepackage{acronym}
-\usepackage{listings}
+\usepackage{minted}
+\usepackage{fontspec}
 \usepackage{hyperref}
 \usepackage{xcolor}
 
+\definecolor{shellbg}{rgb}{0.9,0.9,0.9}
 
 \hypersetup{
-    colorlinks,
-    linkcolor={red!50!black},
-    citecolor={blue!50!black},
-    urlcolor={blue!80!black}
+  colorlinks,
+  linkcolor={red!50!black},
+  citecolor={blue!50!black},
+  urlcolor={blue!80!black}
 }
-
-\lstset{
-  basicstyle=\ttfamily\footnotesize
-}
-
 
 \begin{document}
 
   \section{Introduction}
-    Since you're reading this, I asume you want to learn about programming \ac{OpenCL}. This tutorial is not going to teach you \emph{why} you'd want to program using \ac{OpenCL}. I can only tell you why \emph{I} want to program \ac{OpenCL}, then you can decide if our goals are in alignment: I want to do generic number crunching, using the speed of \acp{GPU} where possible.
+    Since you're reading this, I asume you want to learn about programming \acf{OpenCL}. This tutorial is not going to teach you \emph{why} you'd want to program using \ac{OpenCL}. I can only tell you why \emph{I} want to program \ac{OpenCL}, then you can decide if our goals are in alignment: I want to do generic number crunching, using the speed of \acp{GPU} where possible.
 
-    The second question you could (but shouldn't) ask is: why not \acs{CUDA}? nVidia's \ac{CUDA} is a proprietary system that only runs on nVidia hardware. When I write software I don't want its use being limited to machines with an nVidia \ac{GPU}. I don't own nVidia hardware; all I want is to speed up computations that I'd do on my laptop's \acs{CPU} otherwise.
+    The second question you could (but shouldn't) ask is: why not \acs{CUDA}? nVidia's \ac{CUDA} is a proprietary system that only runs on nVidia hardware. When I write software I don't want its use being limited to machines with an nVidia \ac{GPU}. If all we have is a multi-core \acs{CPU}, the software should run all the same.
 
-    During this tutorial we'll develop ways of embedding the \acs{OpenCL} enabled code into other code without having to write too much boiler plate at every time we're calling into \acs{OpenCL}. This means we'll be using C++.
+    During this tutorial we'll develop ways of embedding the \ac{OpenCL} enabled code into other code without having to write too much boiler plate at every time we're calling into \ac{OpenCL}. This means we'll be using C++. All the extra utilities that we use on top of the C++ interface to \ac{OpenCL} will be explained in detail.
 
     \subsection{What you need}
-    A distribution of \acs{GNU} running on the Linux kernel. Most of this should work fine on Windows, but I have no experience with developing on Windows what so ever.
+    It is strongly advised to run this tutorial on a distribution of \acs{GNU} running on the Linux kernel. Most of this should work fine on Windows, but this has not been tested.
 
     \subsubsection{To run \acs{OpenCL}.}
     The \acf{OpenCL} is a specification of an interface for doing computations on heterogenious hardware. To use \ac{OpenCL} you need an actual implementation. The implementation you use will depend on the hardware that you're running on. These implementations are distributed in the form of \acfp{ICD}. Some of these \acp{ICD} are packaged by \acs{GNU}/Linux distributions, but for best performance on larger \acfp{GPU}, it is not unusual that you need to download a non-free \ac{ICD} from the vendor's website.
@@ -47,20 +44,72 @@
 
   Lessons in this tutorial are built with the Meson build system, which in turn uses Ninja. Meson is written in Python and can be installed using:
 
-  \begin{lstlisting}[language=bash]
-  > pip install --user meson
-  \end{lstlisting}
+  \begin{minted}[bgcolor=shellbg]{text}
+  $ pip install --user meson
+  \end{minted}
 
   If Ninja is not present on your system, install it by cloning it with {\tt git}, and put the binary in a findable place (this assumes {\tt \~\ /.local/bin} is in your {\tt \$PATH}):
 
-  \begin{lstlisting}[language=bash]
-  > git clone git@github.com:ninja-build/ninja.git
-  > cd ninja
-  ninja> ./configure.py --bootstrap
-  ninja> cp ninja ~/.local/bin
-  \end{lstlisting}
+  \begin{minted}[bgcolor=shellbg]{text}
+  $ git clone git@github.com:ninja-build/ninja.git
+  $ cd ninja
+  ninja$ ./configure.py --bootstrap
+  ninja$ cp ninja ~/.local/bin
+  \end{minted}
 
-  \section{Lesson 1: Finding devices}
+  Try building the tutorials now:
+
+  \begin{minted}[bgcolor=shellbg]{text}
+  OpenCL-tutorial$ meson build
+  The Meson build system
+  Version: 0.39.1
+  Source dir: <...>/OpenCL-tutorial
+  Build dir: <...>/OpenCL-tutorial/build
+  ...
+  Build targets in project: 6
+
+  OpenCL-tutorial$ cd build && ninja
+  [16/16] Linking target lesson3
+  \end{minted}
+
+  If all went well, you should now be able to run `cl-info`, on my laptop it finds two platforms:
+
+  \begin{minipage}{\linewidth}
+    \begin{minted}[bgcolor=shellbg]{text}
+  OpenCL-tutorial/build$ ./cl-info
+  Number of platforms: 2
+
+  == Nº 1 =======================================
+    Name:      Intel Gen OCL Driver
+    Vendor:    Intel
+    # devices: 1
+
+    -- Nº 1 -------------------------------------
+      Name:             Intel(R) HD Graphics ...
+      Device version:   OpenCL 1.2 beignet 1.3
+      Driver version:   1.3
+      OpenCL version:   OpenCL C 1.2 beignet 1.3
+      # Compute units:  24
+
+  == Nº 2 =======================================
+    Name:      Portable Computing Language
+    Vendor:    The pocl project
+    # devices: 1
+
+    -- Nº 1 -------------------------------------
+      Name:             pthread-Intel(R) ...
+      Device version:   OpenCL 2.0 pocl ...
+      Driver version:   0.14-pre
+      OpenCL version:   OpenCL C 2.0
+      # Compute units:  4
+  \end{minted}
+  \end{minipage}
+
+  Next, we'll see how we actually find these devices.
+
+  \section{Lesson 1: Finding devices, \acs{OpenCL} architecture}
+
+  \section{Lesson 2: Writing kernels, using buffers and queues}
 
   \section{Acronyms}
   \begin{acronym}
