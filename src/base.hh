@@ -109,19 +109,6 @@ namespace cl_tutorial
         return ss.str();
     }
 
-    template <typename ...Args>
-    inline void checkErr(cl_int err, Args &&...args)
-    {
-        if (err != CL_SUCCESS)
-        {
-            std::cerr
-                << "ERROR (" << err
-                << "):" << format(std::forward<Args>(args)...)
-                << std::endl;
-            exit(EXIT_FAILURE);
-        }
-    }
-
     class exception: public std::exception
     {
         std::string msg;
@@ -137,6 +124,29 @@ namespace cl_tutorial
 
             virtual ~exception() throw() {}
     };
+
+    template <typename I>
+    void split(std::string const &s, char d, I inserter)
+    {
+        size_t p, q = 0;
+        while (q < s.length())
+        {
+            p = s.find_first_not_of(d, q);
+            if (p == std::string::npos) return;
+
+            q = s.find_first_of(d, p);
+            if (q == std::string::npos)
+            {
+                *inserter = s.substr(p, s.length() - p);
+                return;
+            }
+            else
+            {
+                *inserter = s.substr(p, q-p);
+                ++inserter;
+            }
+        }
+    }
 
     class Log
     {
@@ -166,6 +176,21 @@ namespace cl_tutorial
                 for (std::string const &i : m_indent)
                     std::cerr << i;
                 std::cerr << format(std::forward<Args>(args)...) << std::endl;
+                return *this;
+            }
+
+            template <typename ...Args>
+            Log &error(Args &&...args)
+            {
+                std::string m = format(std::forward<Args>(args)...);
+                push("\033[1;31m[error]\033[m ");
+                std::vector<std::string> lines;
+                split(m, '\n', std::back_inserter(lines));
+                for (std::string const &l : lines)
+                {
+                    msg(l);
+                }
+                pop();
                 return *this;
             }
     };
@@ -200,5 +225,16 @@ namespace cl_tutorial
                     .pop("\033[34m┕\033[m stop timer [", msg, "]: ", duration, " ms");
             }
     };
+
+    template <typename ...Args>
+    inline void checkErr(cl_int err, Args &&...args)
+    {
+        if (err != CL_SUCCESS)
+        {
+            std::string msg = format(std::forward<Args>(args)...);
+            console.error(err, msg);
+            throw exception(msg);
+        }
+    }
 }
 
