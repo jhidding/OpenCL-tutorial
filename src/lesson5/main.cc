@@ -10,23 +10,28 @@
 
 using namespace cl_tutorial;
 
-struct NodeBase
+class OpenCL
 {
-    cl::Kernel kernel;
+    public:
+        cl::Context context;
+        std::vector<cl::Device> devices;
+        cl::Program program;
+        cl::CommandQueue queue;
+
+        static OpenCL default_gpu_context()
+        {
+            OpenCL obj;
+
+
+        }
+
+    private:
+        OpenCL() = default;
+        OpenCL(OpenCL const &OpenCL) = delete;
+        OpenCL &operator=(OpenCL const &other) = delete;
 };
 
-template <typename ... Args>
-struct Node: public NodeBase
-{
-    std::tuple<Args...> arguments;
-};
-
-class Workflow
-{
-
-};
-
-void render_opencl(
+void render_julia_set(
     unsigned width, unsigned height, unsigned max_it, float *data)
 {
     Timer time;

@@ -23,12 +23,11 @@ int main(int argc, char **argv)
     std::vector<cl::Device> devices;
     cl::Context cx;
     std::tie(devices, cx) = get_default_gpu_context();
-    std::cerr << "\n";
 
     timer.start("compiling");
     cl::Program program = get_program_from_file(
         cx, devices, "src/kernels/lesson3.cl");
-    timer.stop(); std::cerr << "\n";
+    timer.stop();
 
     // reserve memory for buffers
     int err_code;
@@ -37,8 +36,8 @@ int main(int argc, char **argv)
     size_t a_bytesize = sizeof(float) * N;
     cl::Buffer a_d(cx, CL_MEM_READ_WRITE, a_bytesize);
 
-    std::cerr << "Running with N = " << N << ", generating random numbers ...\n";
     timer.start("initialisation");
+    console.msg("Running with N = ", N, ", generating random numbers ...");
     // get seed from current time
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     // random numbers using Mersenne prime twister and a normal distribution
@@ -46,7 +45,6 @@ int main(int argc, char **argv)
     // generate!
     std::generate(a_h.begin(), a_h.end(), rng);
     timer.stop();
-    std::cerr << "(ok)\n\n";
 
     timer.start("adding up numbers");
     // Create a CommandQueue
@@ -79,7 +77,7 @@ int main(int argc, char **argv)
         set_args(sum_step_k, a_d, N_ceil);
 
         cl::Event sum_step_evt;
-        std::cerr << "Queueing sum_step with size " << N_floor << std::endl;
+        console.msg("Queueing sum_step with size ", N_floor);
         err_code = queue.enqueueNDRangeKernel(
             sum_step_k, 0, cl::NDRange(N_floor), cl::NullRange,
             &wait_list, &sum_step_evt);
@@ -90,7 +88,7 @@ int main(int argc, char **argv)
 
         M = N_ceil;
     }
-    std::cerr << "Done building queue ...\n";
+    console.msg("Done building queue ...");
 
     float result;
     queue.enqueueReadBuffer(a_d, CL_TRUE, 0, sizeof(float), &result,
@@ -100,14 +98,6 @@ int main(int argc, char **argv)
     queue.enqueueReadBuffer(a_d, CL_TRUE, 0, a_bytesize, b_h.data(),
         &wait_list, NULL);
     queue.finish();
-    std::cerr << "\n";
-
-    for (unsigned i = 0; i < 5; ++i)
-        std::cerr << a_h[i] << " " << b_h[i] << std::endl;
-    std::cerr << "..." << " " << "..." << std::endl;
-    for (unsigned i = N-5; i < N; ++i)
-        std::cerr << a_h[i] << " " << b_h[i] << std::endl;
-    std::cerr << std::endl;
 
     std::cout << "# Number: " << N << std::endl
               << "# Sum:    " << result << std::endl

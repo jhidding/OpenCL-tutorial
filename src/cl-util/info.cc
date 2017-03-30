@@ -7,14 +7,14 @@ using namespace cl_tutorial;
 void cl_tutorial::print_opencl_info(
     std::vector<cl::Platform> const &platform_list)
 {
-    std::cerr << "Number of platforms: " << platform_list.size() << "\n\n";
+    console.msg("Number of platforms: ", platform_list.size()).msg();
 
     for (unsigned i = 0; i < platform_list.size(); ++i)
     {
         auto const &platform = platform_list[i];
-        std::cerr << "== Nº " << i+1
-                  << " =================================================================\n"
-                  << "  Name:      "
+        console
+            .msg("== Nº ", i+1, " =================================================================")
+            .msg("  Name:      "
                   << platform.getInfo<CL_PLATFORM_NAME>() << "\n"
                   << "  Vendor:    "
                   << platform.getInfo<CL_PLATFORM_VENDOR>() << "\n";

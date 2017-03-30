@@ -24,15 +24,14 @@ cl::Program cl_tutorial::get_program_from_file(
     std::vector<cl::Device> const &devices,
     std::string const &filename)
 {
-    std::cerr << "Compiling " + filename + " ...\n";
+    console.msg("Compiling ", filename, " ...");
     cl::Program::Sources sources;
     sources.push_back(load_source(filename));
     cl::Program program(cx, sources);
 
     auto err_code = program.build(devices, "");
-    checkErr(err_code, 
+    checkErr(err_code,
         program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]));
-    std::cerr << "(ok)\n";
 
     return program;
 }
