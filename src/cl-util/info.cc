@@ -14,32 +14,33 @@ void cl_tutorial::print_opencl_info(
         auto const &platform = platform_list[i];
         console
             .msg("== Nº ", i+1, " =================================================================")
-            .msg("  Name:      "
-                  << platform.getInfo<CL_PLATFORM_NAME>() << "\n"
-                  << "  Vendor:    "
-                  << platform.getInfo<CL_PLATFORM_VENDOR>() << "\n";
+            .push("  ")
+            .msg("Name:      ", platform.getInfo<CL_PLATFORM_NAME>())
+            .msg("Vendor:    ", platform.getInfo<CL_PLATFORM_VENDOR>());
 
         std::vector<cl::Device> device_list;
         platform.getDevices(CL_DEVICE_TYPE_ALL, &device_list);
 
-        std::cerr << "  # devices: " << device_list.size() << "\n\n";
+        console
+			.msg("  # devices: ", device_list.size())
+			.msg();
 
         for (unsigned j = 0; j < device_list.size(); ++j)
         {
             auto const &device = device_list[j];
-            std::cerr << "  -- Nº " << j+1
-                      << " ---------------------------------------------------------------\n"
-                      << "    Name:             "
-                      << device.getInfo<CL_DEVICE_NAME>() << "\n"
-                      << "    Device version:   "
-                      << device.getInfo<CL_DEVICE_VERSION>() << "\n"
-                      << "    Driver version:   "
-                      << device.getInfo<CL_DRIVER_VERSION>() << "\n"
-                      << "    OpenCL version:   "
-                      << device.getInfo<CL_DEVICE_OPENCL_C_VERSION>() << "\n"
-                      << "    # Compute units:  "
-                      << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << "\n\n";
+            console
+				.msg("-- Nº ", j+1, " ---------------------------------------------------------------")
+				.push("  ")
+                .msg("Name:             ", device.getInfo<CL_DEVICE_NAME>())
+                .msg("Device version:   ", device.getInfo<CL_DEVICE_VERSION>())
+				.msg("Driver version:   ", device.getInfo<CL_DRIVER_VERSION>())
+				.msg("OpenCL version:   ", device.getInfo<CL_DEVICE_OPENCL_C_VERSION>())
+				.msg("# Compute units:  ", device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
+				.msg()
+				.pop();
         }
+
+		console.pop();
     }
 }
 
