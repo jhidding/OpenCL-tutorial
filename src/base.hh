@@ -109,11 +109,15 @@ namespace cl_tutorial
         return ss.str();
     }
 
-    inline void checkErr(cl_int err, std::string const &msg)
+    template <typename ...Args>
+    inline void checkErr(cl_int err, Args &&...args)
     {
         if (err != CL_SUCCESS)
         {
-            std::cerr << "ERROR (" << err << "):" << msg << std::endl;
+            std::cerr
+                << "ERROR (" << err
+                << "):" << format(std::forward<Args>(args)...)
+                << std::endl;
             exit(EXIT_FAILURE);
         }
     }

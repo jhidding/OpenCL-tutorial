@@ -53,3 +53,10 @@ executable('lesson4', lesson4_files,
     link_with: [cl_util_static],
     include_directories: local_include)
 
+    executable('lesson5', lesson5_files,
+    dependencies : [opencl_dep, libpng_dep],
+    cpp_args: ['-std=c++14', '-O3', '-fopenmp'],
+    link_args: ['-lgomp'],
+    link_with: [cl_util_static],
+    include_directories: local_include)
+
